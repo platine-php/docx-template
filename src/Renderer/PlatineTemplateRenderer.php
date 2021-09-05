@@ -29,9 +29,9 @@
  */
 
 /**
- *  @file NullRenderer.php
+ *  @file PlatineTemplateRenderer.php
  *
- *  The null renderer class
+ *  The renderer using Platine Template class
  *
  *  @package    Platine\DocxTemplate\Renderer
  *  @author Platine Developers Team
@@ -47,18 +47,68 @@ declare(strict_types=1);
 namespace Platine\DocxTemplate\Renderer;
 
 use Platine\DocxTemplate\DocxTemplateRendererInterface;
+use Platine\Template\Template;
 
 /**
- * @class NullRenderer
+ * @class PlatineTemplateRenderer
  * @package Platine\DocxTemplate\Renderer
  */
-class NullRenderer implements DocxTemplateRendererInterface
+class PlatineTemplateRenderer implements DocxTemplateRendererInterface
 {
+    /**
+     * The template instance to use
+     * @var Template
+     */
+    protected Template $template;
+
+    /**
+     * Create new instance
+     * @param Template $template
+     */
+    public function __construct(Template $template)
+    {
+        $this->template = $template;
+    }
+
     /**
      * {@inheritodc}
      */
     public function render(string $content, array $data = []): string
     {
-        return $content;
+        $cleanContent = $this->cleanDocxXmlTags($content);
+
+        return $this->template->renderString($cleanContent, $data);
+    }
+
+    /**
+     * Clean the document XML tags
+     * @param string $content
+     * @return string
+     */
+    protected function cleanDocxXmlTags(string $content): string
+    {
+        //kills all xml tags within curly mustache brackets
+        //this is necessary, as word might produce unnecesary xml tags inbetween
+        //curly backets.
+
+        //this regex needs either to be improved or it needs to be replace with
+        //a method that is aware of the xml
+        // as the regex can mess up the xml badly if the pattern does not
+        // coem with the expected content
+        $variables = (string) preg_replace_callback(
+            '/{{(.*?)}}/',
+            function ($match) {
+                return strip_tags($match[0]);
+            },
+            (string) preg_replace('/(?<!{){(?!{)<\/w:t>[\s\S]*?<w:t>{/', '{{', $content)
+        );
+
+        return (string) preg_replace_callback(
+            '/{%(.*?)%}/',
+            function ($match) {
+                return strip_tags($match[0]);
+            },
+            (string) preg_replace('/(?<!{){(?!{)<\/w:t>[\s\S]*?<w:t>{/', '{%', $variables)
+        );
     }
 }

@@ -29,35 +29,16 @@
  * SOFTWARE.
  */
 
-/**
- *  @file DocxConvertorInterface.php
- *
- *  The Document convertor interface
- *
- *  @package    Platine\DocxTemplate
- *  @author Platine Developers Team
- *  @copyright  Copyright (c) 2020
- *  @license    http://opensource.org/licenses/MIT  MIT License
- *  @link   http://www.iacademy.cf
- *  @version 1.0.0
- *  @filesource
- */
-
 declare(strict_types=1);
 
-namespace Platine\DocxTemplate;
+namespace Platine\DocxTemplate\Exception;
+
+use Exception;
 
 /**
- * @class DocxConvertorInterface
- * @package Platine\DocxTemplate
+ * @class DocxTemplateException
+ * @package Platine\DocxTemplate\Exception
  */
-interface DocxConvertorInterface
+class DocxTemplateException extends Exception
 {
-
-    /**
-     * Convert the template file
-     * @param string $templateFile
-     * @return string the content or conversion file path
-     */
-    public function convert(string $templateFile): string;
 }

@@ -55,5 +55,16 @@ use Platine\DocxTemplate\DocxConvertorInterface;
 class LibreOfficePDFConvertor implements DocxConvertorInterface
 {
 
-
+    /**
+     * {@inheritodc}
+     * @example:
+     * sudo apt-get install libreoffice-common libreoffice-writer \
+     *  default-jre libreoffice-java-common openjdk-8-jre-headless
+     * 
+     * soffice --headless  --convert-to pdf /path/to/*.docx --outdir /path/to/out
+     */
+    public function convert(string $templateFile): string
+    {
+        return $templateFile;
+    }
 }

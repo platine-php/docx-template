@@ -54,5 +54,11 @@ use Platine\DocxTemplate\DocxConvertorInterface;
  */
 class NullConvertor implements DocxConvertorInterface
 {
-
+    /**
+     * {@inheritodc}
+     */
+    public function convert(string $templateFile): string
+    {
+        return $templateFile;
+    }
 }
