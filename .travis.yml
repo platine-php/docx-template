@@ -1,0 +1,21 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=ce81c04060cc626c9708bfa6a32cac9001a58ac2cbb59749d8b528f8d81db708
+dist: bionic
+language: php
+php:
+    - '7.4'
+    - '8.0'
+   
+    
+before_script: 
+    - composer install
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - ./cc-test-reporter before-build
+script: 
+    - "vendor/bin/phpunit --coverage-clover build/logs/clover.xml"
+after_script:
+    - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build  -t clover --exit-code $TRAVIS_TEST_RESULT; fi
+matrix:
+    fast_finish: true

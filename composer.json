@@ -1,0 +1,66 @@
+{
+    "name": "platine-php/docx-template",
+    "description": "Platine Docx template is the lightweight library to manipulate the content of .docx files",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["application", "website", "development", "framework", "php", "platine", "docx", "generator", "document", "template"],
+    "authors": [
+        {
+            "name": "NGUEREZA Tony",
+            "email": "nguerezatony@gmail.com",
+            "homepage": "http://www.iacademy.cf",
+            "role": "developer"
+        }
+    ],
+
+    "support": {
+        "issues": "https://github.com/platine-php/docx-template/issues",
+        "source": "https://github.com/platine-php/docx-template"
+    },
+	
+    "require": {
+        "php": "^7.4 || ^8"
+    },
+	
+    "require-dev": {
+        "mikey179/vfsstream": "~1.6",
+        "phpmd/phpmd": "@stable",
+        "phpstan/phpstan": "0.12.x-dev",
+        "phpunit/phpunit": "^9.5",
+        "platine-php/dev": "dev-develop",
+        "squizlabs/php_codesniffer": "3.*"
+    },
+    
+    "autoload": {
+        "psr-4":{
+            "Platine\\DocxTemplate\\": "src/"
+        }
+    },
+    
+    "autoload-dev": {
+        "psr-4":{
+            "Platine\\Test\\": "tests"
+        }
+    },
+    
+    "config": {
+        "sort-packages": true
+    },
+    
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "1.0.x-dev"
+        }
+    },
+
+    "scripts": {
+        "test": "phpunit --colors=always",
+        "static": "phpstan analyze",
+        "check": "phpcs",
+        "check-fix": "phpcbf",
+        "analyze": "phpmd src xml phpmd.xml"
+    },
+	
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
