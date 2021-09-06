@@ -3,6 +3,7 @@
 declare(strict_types=1);
 require_once 'vendor/autoload.php';
 
+use Platine\DocxTemplate\Archive\NullExtractor;
 use Platine\DocxTemplate\Convertor\NullConvertor;
 use Platine\DocxTemplate\DocxTemplate;
 use Platine\DocxTemplate\Renderer\PlatineTemplateRenderer;
@@ -15,15 +16,20 @@ $localAdapter = new LocalAdapter();
 $filesystem = new Filesystem($localAdapter);
 $template = new Template();
 $renderer = new PlatineTemplateRenderer($template); //new NullRenderer();
-$convertor = new NullConvertor(); // new LibreOfficePDFConvertor();
+// $convertor = new LibreOfficePDFConvertor();
+$convertor = new NullConvertor();
+$extractor = new NullExtractor();
+// $extractor = new Zip();
 
 //Use container to resolve automatically 
 //all the given parameters
 $l = new DocxTemplate(
     $filesystem,
     $renderer,
-    $convertor
+    $convertor,
+    $extractor
 ); 
+
 $l->setTemplateFile(dirname(__FILE__) . '/invoice.docx')
    ->setData([
        'company' => [
@@ -72,4 +78,4 @@ $l->process();
 $l->convert();
 
 echo 'Template output file path: ' . $l->getOutputTemplateFile() . "\n";
-echo 'Template conversion file path: ' . $l->getConvertionFile() . "\n";
+echo 'Template conversion file path: ' . $l->getConversionFile() . "\n";

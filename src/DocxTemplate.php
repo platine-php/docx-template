@@ -47,14 +47,10 @@ declare(strict_types=1);
 
 namespace Platine\DocxTemplate;
 
-use FilesystemIterator;
+use Platine\DocxTemplate\Archive\NullExtractor;
 use Platine\DocxTemplate\Convertor\NullConvertor;
-use Platine\DocxTemplate\Exception\DocxTemplateException;
 use Platine\DocxTemplate\Renderer\NullRenderer;
 use Platine\Filesystem\Filesystem;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use ZipArchive;
 
 /**
  * @class DocxTemplate
@@ -74,6 +70,12 @@ class DocxTemplate
      * @var DocxTemplateRendererInterface
      */
     protected DocxTemplateRendererInterface $renderer;
+
+    /**
+     * The template extractor instance
+     * @var DocxExtractorInterface
+     */
+    protected DocxExtractorInterface $extractor;
 
     /**
      * The file instance to use
@@ -103,13 +105,13 @@ class DocxTemplate
      * Output template file after renderer
      * @var string
      */
-    protected string $outputTemplateFile;
+    protected string $outputTemplateFile = '';
 
     /**
      * The file path after conversion
      * @var string
      */
-    protected string $convertionFile = '';
+    protected string $conversionFile = '';
 
     /**
      * The list of files inside document template
@@ -137,7 +139,7 @@ class DocxTemplate
     protected string $tempDir;
 
     /**
-     * The directory to use to extract template into
+     * The directory to use to extract template contents into
      * @var string
      */
     protected string $templateExtractDir;
@@ -147,15 +149,18 @@ class DocxTemplate
      * @param Filesystem $filesystem
      * @param DocxTemplateRendererInterface|null $renderer
      * @param DocxConvertorInterface|null $convertor
+     * @param DocxExtractorInterface|null $extractor
      */
     public function __construct(
         Filesystem $filesystem,
         ?DocxTemplateRendererInterface $renderer = null,
-        ?DocxConvertorInterface $convertor = null
+        ?DocxConvertorInterface $convertor = null,
+        ?DocxExtractorInterface $extractor = null
     ) {
         $this->filesystem = $filesystem;
         $this->convertor = $convertor ?? new NullConvertor();
         $this->renderer = $renderer ?? new NullRenderer();
+        $this->extractor = $extractor ?? new NullExtractor();
         $this->tempDir = sys_get_temp_dir();
     }
 
@@ -169,17 +174,6 @@ class DocxTemplate
     }
 
     /**
-     * Set the convertor
-     * @param DocxConvertorInterface $convertor
-     * @return $this
-     */
-    public function setConvertor(DocxConvertorInterface $convertor): self
-    {
-        $this->convertor = $convertor;
-        return $this;
-    }
-
-    /**
      * Return the renderer
      * @return DocxTemplateRendererInterface
      */
@@ -189,14 +183,12 @@ class DocxTemplate
     }
 
     /**
-     * Set the renderer
-     * @param DocxTemplateRendererInterface $renderer
-     * @return $this
+     * Return the extractor
+     * @return DocxExtractorInterface
      */
-    public function setRenderer(DocxTemplateRendererInterface $renderer): self
+    public function getExtractor(): DocxExtractorInterface
     {
-        $this->renderer = $renderer;
-        return $this;
+        return $this->extractor;
     }
 
     /**
@@ -212,9 +204,9 @@ class DocxTemplate
      * Return the conversion file path or content
      * @return string
      */
-    public function getConvertionFile(): string
+    public function getConversionFile(): string
     {
-        return $this->convertionFile;
+        return $this->conversionFile;
     }
 
     /**
@@ -273,33 +265,11 @@ class DocxTemplate
         }
 
         if (empty($this->outputTemplateFile)) {
-            $this->outputTemplateFile = $this->tempDir . '/output_' . basename($this->templateFile);
+            $this->outputTemplateFile = $this->tempDir
+                                        . '/output_' . basename($this->templateFile);
         }
 
-        $zip = new ZipArchive();
-        $create = $zip->open(
-            $this->outputTemplateFile,
-            ZipArchive::CREATE | ZipArchive::OVERWRITE
-        );
-        if ($create === true) {
-             // Create recursive directory iterator
-            $files = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($this->templateExtractDir, FilesystemIterator::SKIP_DOTS),
-                RecursiveIteratorIterator::LEAVES_ONLY
-            );
-
-            foreach ($files as $name => $file) {
-                $name = substr($name, strlen($this->templateExtractDir . '/'));
-                $zip->addFile($file->getRealPath(), $name);
-            }
-            $zip->close();
-        } else {
-            throw new DocxTemplateException(sprintf(
-                'Can not open file [%s], error code [%s]',
-                $this->outputTemplateFile,
-                $create
-            ));
-        }
+        $this->writeDocx();
 
         $this->cleanTempData();
     }
@@ -310,8 +280,10 @@ class DocxTemplate
      */
     public function convert(): self
     {
-        $this->convertionFile = $this->convertor
-                               ->convert($this->outputTemplateFile);
+        $this->conversionFile = $this->convertor->convert(
+            $this->outputTemplateFile
+        );
+
         return $this;
     }
 
@@ -337,35 +309,30 @@ class DocxTemplate
     protected function extractDocumentFiles(): void
     {
         $fileList = [];
-        $zip = new ZipArchive();
-        $open = $zip->open($this->templateTempFile);
-        if ($open === true) {
-            if (!$zip->extractTo($this->templateExtractDir)) {
-                throw new DocxTemplateException(sprintf(
-                    'Can not extract file [%s]',
-                    $this->templateTempFile
-                ));
-            }
-            $total = $zip->numFiles;
-            for ($i = 0; $i < $total; $i++) {
-                $stat = $zip->statIndex($i);
-                if ($stat !== false) {
-                    foreach ($this->fileListToProcess as $fileToProcess) {
-                        if (fnmatch($fileToProcess, $stat['name'])) {
-                            $fileList[] = $stat['name'];
-                        }
-                    }
+        $this->extractor->extract($this->templateTempFile, $this->templateExtractDir);
+        $total = $this->extractor->totalFiles();
+        for ($i = 0; $i < $total; $i++) {
+            $info = $this->extractor->getInfo($i);
+            foreach ($this->fileListToProcess as $fileToProcess) {
+                if (fnmatch($fileToProcess, $info->getName())) {
+                    $fileList[] = $info->getName();
                 }
             }
-            $zip->close();
-            $this->docxFileList = $fileList;
-        } else {
-            throw new DocxTemplateException(sprintf(
-                'Can not open file [%s], error code [%s]',
-                $this->templateTempFile,
-                $open
-            ));
         }
+        $this->docxFileList = $fileList;
+        $this->extractor->close();
+    }
+
+    /**
+     * Write template document back after processed
+     * @return void
+     */
+    protected function writeDocx(): void
+    {
+        $this->extractor->archiveFolder(
+            $this->templateExtractDir,
+            $this->outputTemplateFile
+        );
     }
 
     /**
