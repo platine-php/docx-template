@@ -47,6 +47,7 @@ declare(strict_types=1);
 namespace Platine\DocxTemplate\Convertor;
 
 use Platine\DocxTemplate\DocxConvertorInterface;
+use RuntimeException;
 
 /**
  * @class LibreOfficePDFConvertor
@@ -60,11 +61,36 @@ class LibreOfficePDFConvertor implements DocxConvertorInterface
      * @example:
      * sudo apt-get install libreoffice-common libreoffice-writer \
      *  default-jre libreoffice-java-common openjdk-8-jre-headless
-     * 
+     *
      * soffice --headless  --convert-to pdf /path/to/*.docx --outdir /path/to/out
      */
     public function convert(string $templateFile): string
     {
-        return $templateFile;
+        if (!function_exists('passthru')) {
+            throw new RuntimeException(sprintf(
+                'Can not convert document using [%s], function '
+                    . '"passthru" is not available in your php installation',
+                __CLASS__
+            ));
+        }
+        /** @var array<string, string> $fileinfo */
+        $fileinfo = pathinfo($templateFile);
+        $destinationPath = $fileinfo['dirname'];
+        $convertFile = $fileinfo['filename'] . '.pdf';
+        $cmd = sprintf(
+            'soffice --headless  --convert-to pdf %s --outdir %s',
+            escapeshellarg($templateFile),
+            escapeshellarg($destinationPath)
+        );
+        $exitCode = 0;
+        passthru($cmd, $exitCode);
+        if ($exitCode !== 0) {
+            throw new RuntimeException(sprintf(
+                'Can not convert document to PDF, command execution error: [%d]',
+                $exitCode
+            ));
+        }
+
+        return $destinationPath . '/' . $convertFile;
     }
 }

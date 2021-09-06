@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Platine\Test\DocxTemplate;
 
 use Platine\Dev\PlatineTestCase;
+use Platine\DocxTemplate\Convertor\NullConvertor;
 use Platine\DocxTemplate\DocxTemplate;
-use Platine\DocxTemplate\Renderer\PlatineTemplateRenderer;
-use Platine\Filesystem\Adapter\Local\LocalAdapter;
+use Platine\DocxTemplate\Renderer\NullRenderer;
 use Platine\Filesystem\Filesystem;
-use Platine\Template\Template;
 
 /**
  * DocxTemplate class tests
@@ -32,46 +31,4 @@ class DocxTemplateTest extends PlatineTestCase
         $this->assertEquals($convertor, $l->getConvertor());
         $this->assertEquals($renderer, $l->getRenderer());
     }
-
-    /*
-    public function testConstructorCustomInstances(): void
-    {
-        $localAdapter = new LocalAdapter();
-        $filesystem = new Filesystem($localAdapter);
-
-        $template = new Template();
-
-        $l = new DocxTemplate($filesystem, new PlatineTemplateRenderer($template));
-        $l->setTempDir('/mnt/d/tnhdocx')
-           ->setTemplateFile('/mnt/d/my_template.docx')
-           ->setData([
-               'header' => 'PLATINE APPLICATION',
-               'footer' => 'Copyright 2021, Tony NGUEREZA',
-               'name' => 'Tony NGUEREZA',
-               'items' => [
-                   [
-                       'id' => 1,
-                       'name' => 'Savon',
-                       'price' => 1050,
-                       'total' => 1050,
-                   ],
-                   [
-                       'id' => 2,
-                       'name' => 'Sucre',
-                       'price' => 500,
-                       'total' => 1000,
-                   ],
-                   [
-                       'id' => 3,
-                       'name' => 'Omo',
-                       'price' => 150,
-                       'total' => 1500,
-                   ]
-               ],
-           ]);
-        $l->process();
-        $this->assertTrue(true);
-    }
-
-     */
 }

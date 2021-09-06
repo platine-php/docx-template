@@ -295,19 +295,24 @@ class DocxTemplate
             $zip->close();
         } else {
             throw new DocxTemplateException(sprintf(
-                'Can not open file [%s]',
-                $this->outputTemplateFile
+                'Can not open file [%s], error code [%s]',
+                $this->outputTemplateFile,
+                $create
             ));
         }
+
+        $this->cleanTempData();
     }
 
     /**
      * Convert the output template to another format like PDF, HTML
-     * @return string
+     * @return $this
      */
-    public function convert(): string
+    public function convert(): self
     {
-        return $this->convertor->convert($this->outputTemplateFile);
+        $this->convertionFile = $this->convertor
+                               ->convert($this->outputTemplateFile);
+        return $this;
     }
 
     /**
@@ -344,7 +349,7 @@ class DocxTemplate
             $total = $zip->numFiles;
             for ($i = 0; $i < $total; $i++) {
                 $stat = $zip->statIndex($i);
-                if($stat !== false ){
+                if ($stat !== false) {
                     foreach ($this->fileListToProcess as $fileToProcess) {
                         if (fnmatch($fileToProcess, $stat['name'])) {
                             $fileList[] = $stat['name'];
@@ -356,8 +361,9 @@ class DocxTemplate
             $this->docxFileList = $fileList;
         } else {
             throw new DocxTemplateException(sprintf(
-                'Can not open file [%s]',
-                $this->templateTempFile
+                'Can not open file [%s], error code [%s]',
+                $this->templateTempFile,
+                $open
             ));
         }
     }
@@ -375,5 +381,15 @@ class DocxTemplate
             $renderContent = $this->renderer->render($content, $this->data);
             $templateFile->write($renderContent);
         }
+    }
+
+    /**
+     * Clean the temporary data after processed
+     * @return void
+     */
+    protected function cleanTempData(): void
+    {
+        $this->filesystem->directory($this->templateExtractDir)->delete();
+        $this->filesystem->file($this->templateTempFile)->delete();
     }
 }
