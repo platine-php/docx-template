@@ -56,7 +56,7 @@ class ZipTest extends PlatineTestCase
                     ->method('close');
 
         $l = new Zip($zipArchive);
-        $l->archiveFolder(sys_get_temp_dir(), 'foo.zip');
+        $l->archiveFolder('.', 'foo.zip');
     }
 
     public function testExtractOpenFailed(): void
