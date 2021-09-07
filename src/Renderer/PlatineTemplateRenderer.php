@@ -75,7 +75,7 @@ class PlatineTemplateRenderer implements DocxTemplateRendererInterface
      */
     public function render(string $content, array $data = []): string
     {
-        $cleanContent = $this->cleanDocxXmlTags($content);
+        $cleanContent = $this->fixSplitTemplateTags($content);
 
         return $this->template->renderString($cleanContent, $data);
     }
@@ -85,30 +85,42 @@ class PlatineTemplateRenderer implements DocxTemplateRendererInterface
      * @param string $content
      * @return string
      */
-    protected function cleanDocxXmlTags(string $content): string
+    protected function fixSplitTemplateTags(string $content): string
     {
-        //kills all xml tags within curly mustache brackets
-        //this is necessary, as word might produce unnecesary xml tags inbetween
-        //curly backets.
+       /*
+        * If part of the tag is formatted differently we won't get a match.
+     * Best explained with an example:
+     *
+     * ```xml
+     * <w:r>
+     *  <w:rPr/>
+     *  <w:t>Hello ${tag_</w:t>
+     * </w:r>
+     * <w:r>
+     *  <w:rPr>
+     *      <w:b/>
+     *      <w:bCs/>
+     *  </w:rPr>
+     *  <w:t>1}</w:t>
+     * </w:r>
+     * ```
+     *
+     * The above becomes, after running through this method:
+     *
+     * ```xml
+     * <w:r>
+     *  <w:rPr/>
+     *  <w:t>Hello ${tag_1}</w:t>
+     * </w:r>
+     */
+        $matches = [];
+        preg_match_all('~\{(\{|%)([^\}]+)(\}|%)\}~U', $content, $matches);
+        foreach ($matches[0] as $value) {
+            $startTagsCleaned = (string) preg_replace('/<[^>]+>/', '', $value);
+            $endTagsCleaned = (string) preg_replace('/<\/[^>]+>/', '', $startTagsCleaned);
+            $content = str_replace($value, $endTagsCleaned, $content);
+        }
 
-        //this regex needs either to be improved or it needs to be replace with
-        //a method that is aware of the xml
-        // as the regex can mess up the xml badly if the pattern does not
-        // coem with the expected content
-        $variables = (string) preg_replace_callback(
-            '/{{(.*?)}}/',
-            function ($match) {
-                return strip_tags($match[0]);
-            },
-            (string) preg_replace('/(?<!{){(?!{)<\/w:t>[\s\S]*?<w:t>{/', '{{', $content)
-        );
-
-        return (string) preg_replace_callback(
-            '/{%(.*?)%}/',
-            function ($match) {
-                return strip_tags($match[0]);
-            },
-            (string) preg_replace('/(?<!{){(?!{)<\/w:t>[\s\S]*?<w:t>{/', '{%', $variables)
-        );
+        return $content;
     }
 }
