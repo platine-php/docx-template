@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once 'vendor/autoload.php';
 
-use Platine\DocxTemplate\Archive\NullExtractor;
+use Platine\DocxTemplate\Archive\Zip;
 use Platine\DocxTemplate\Convertor\NullConvertor;
 use Platine\DocxTemplate\DocxTemplate;
 use Platine\DocxTemplate\Renderer\PlatineTemplateRenderer;
@@ -20,8 +20,8 @@ $renderer = new PlatineTemplateRenderer($template);
 //$renderer = new NullRenderer();
 //$convertor = new LibreOfficePDFConvertor();
 $convertor = new NullConvertor();
-$extractor = new NullExtractor();
-//$extractor = new Zip();
+//$extractor = new NullExtractor();
+$extractor = new Zip();
 
 //Note: Use container to resolve automatically
 //all the given parameters

@@ -43,4 +43,21 @@ class PlatineTemplateRendererTest extends PlatineTestCase
 
         $this->assertEquals('bar', $l->render('{{ foo<w:t> h </w:t>}} {% for<w:t> h </w:t>%}', []));
     }
+    
+    public function testHandleTableLoop(): void
+    {
+        $template = $this->getMockInstance(Template::class, [
+            'renderString' => 'bar'
+        ]);
+        $xml = '<w:tr><w:tc><w:t>{% for i in data %}{{i.id}}</w:t></w:tc><w:tc>'
+                . '<w:t>{{i.name}}</w:t></w:tc></w:tr><w:tr><w:tc>'
+                . '{% endfor %}</w:tc></w:tr>';
+        $l = new PlatineTemplateRenderer($template);
+        
+        $expected = '{% for i in data %}<w:tr><w:tc><w:t>{{i.id}}'
+                . '</w:t></w:tc><w:tc><w:t>{{i.name}}</w:t></w:tc></w:tr>{% endfor %}';
+        $result = $this->runPrivateProtectedMethod($l, 'handleTableLoop', [$xml]);
+
+        $this->assertEquals($expected, $result);
+    }
 }

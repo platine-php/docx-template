@@ -83,12 +83,13 @@ class ZipTest extends PlatineTestCase
     public function testTotalFiles(): void
     {
         $zipArchive = $this->getMockInstance(ZipArchive::class, [
-            'open' => true
+            'open' => true,
+            'count' => 23
         ]);
 
 
         $l = new Zip($zipArchive);
-        $this->assertEquals(0, $l->totalFiles());
+        $this->assertEquals(23, $l->totalFiles());
     }
 
     public function testClose(): void

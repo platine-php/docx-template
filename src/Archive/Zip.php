@@ -94,7 +94,12 @@ class Zip implements DocxExtractorInterface
             );
 
             foreach ($files as $name => $file) {
-                $name = substr($name, strlen($folder . '/'));
+                //NOTE: Always use "/" as separator
+                $name = str_replace(
+                    ['/', '\\'],
+                    '/',
+                    substr($name, strlen($folder . '/'))
+                );
                 $this->zip->addFile($file->getRealPath(), $name);
             }
             $this->zip->close();
@@ -113,18 +118,18 @@ class Zip implements DocxExtractorInterface
     public function extract(string $archive, string $destination = '.'): void
     {
         $open = $this->zip->open($archive);
-        if ($open === true) {
-            if (!$this->zip->extractTo($destination)) {
-                throw new DocxArchiveException(sprintf(
-                    'Can not extract file [%s]',
-                    $archive
-                ));
-            }
-        } else {
+        if ($open !== true) {
             throw new DocxArchiveException(sprintf(
                 'Can not open file [%s], error code [%s]',
                 $archive,
                 $open
+            ));
+        }
+        
+        if (!$this->zip->extractTo($destination)) {
+            throw new DocxArchiveException(sprintf(
+                'Can not extract file [%s]',
+                $archive
             ));
         }
     }
@@ -134,7 +139,7 @@ class Zip implements DocxExtractorInterface
      */
     public function totalFiles(): int
     {
-        return $this->zip->numFiles;
+        return $this->zip->count();
     }
 
     /**
