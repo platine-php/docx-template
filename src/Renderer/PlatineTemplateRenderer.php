@@ -75,9 +75,10 @@ class PlatineTemplateRenderer implements DocxTemplateRendererInterface
      */
     public function render(string $content, array $data = []): string
     {
-        $cleanContent = $this->fixSplitTemplateTags($content);
+        $fixSplitTagsContent = $this->fixSplitTemplateTags($content);
+        $tableLoopHandle = $this->handleTableLoop($fixSplitTagsContent);
 
-        return $this->template->renderString($cleanContent, $data);
+        return $this->template->renderString($tableLoopHandle, $data);
     }
 
     /**
@@ -114,11 +115,43 @@ class PlatineTemplateRenderer implements DocxTemplateRendererInterface
      * </w:r>
      */
         $matches = [];
-        preg_match_all('~\{(\{|%)([^\}]+)(\}|%)\}~U', $content, $matches);
+        preg_match_all('~\{(\{|%)\s*([^\}]+)\s*(\}|%)\}~U', $content, $matches);
         foreach ($matches[0] as $value) {
             $startTagsCleaned = (string) preg_replace('/<[^>]+>/', '', $value);
             $endTagsCleaned = (string) preg_replace('/<\/[^>]+>/', '', $startTagsCleaned);
             $content = str_replace($value, $endTagsCleaned, $content);
+        }
+
+        return $content;
+    }
+
+    /**
+     * Handle table loop that contains the tags "{% for xx in yyyy %}" and "{% endfor %}"
+     * @param string $content
+     * @return string
+     */
+    protected function handleTableLoop(string $content): string
+    {
+        $matches = [];
+        preg_match_all('~<w:tr(.*?)>(.*)</w:tr>~si', $content, $matches);
+        foreach ($matches[0] as $value) {
+            $parts = explode('</w:tr>', $value);
+            foreach ($parts as $tableRow) {
+                $matchesStartLoop = [];
+                preg_match(
+                    '~{%\s*for\s*([a-z0-9_]+)\s*in\s*([a-z0-9_]+)\s*%}~si',
+                    $tableRow,
+                    $matchesStartLoop
+                );
+                if (!empty($matchesStartLoop[0])) {
+                    $startLoop = $matchesStartLoop[0];
+                    $newTableRow = $startLoop . str_replace($startLoop, '', $tableRow);
+                    $content = str_replace($tableRow, $newTableRow, $content);
+                }
+                if (strpos($tableRow, 'endfor') !== false) {
+                    $content = str_replace($tableRow . '</w:tr>', '{% endfor %}', $content);
+                }
+            }
         }
 
         return $content;

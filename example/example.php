@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 require_once 'vendor/autoload.php';
 
 use Platine\DocxTemplate\Archive\NullExtractor;
@@ -12,23 +13,24 @@ use Platine\Filesystem\Filesystem;
 use Platine\Template\Template;
 
 //////// TODO: use dependency injection to get instances
-$localAdapter = new LocalAdapter(); 
+$localAdapter = new LocalAdapter();
 $filesystem = new Filesystem($localAdapter);
 $template = new Template();
-$renderer = new PlatineTemplateRenderer($template); //new NullRenderer();
-// $convertor = new LibreOfficePDFConvertor();
+$renderer = new PlatineTemplateRenderer($template);
+//$renderer = new NullRenderer();
+//$convertor = new LibreOfficePDFConvertor();
 $convertor = new NullConvertor();
 $extractor = new NullExtractor();
-// $extractor = new Zip();
+//$extractor = new Zip();
 
-//Use container to resolve automatically 
+//Note: Use container to resolve automatically
 //all the given parameters
 $l = new DocxTemplate(
     $filesystem,
     $renderer,
     $convertor,
     $extractor
-); 
+);
 
 $l->setTemplateFile(dirname(__FILE__) . '/invoice.docx')
    ->setData([
