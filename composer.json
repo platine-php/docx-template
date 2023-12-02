@@ -8,7 +8,7 @@
         {
             "name": "NGUEREZA Tony",
             "email": "nguerezatony@gmail.com",
-            "homepage": "http://www.iacademy.cf",
+            "homepage": "https://www.platine-php.com",
             "role": "developer"
         }
     ],
@@ -28,7 +28,7 @@
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
         "phpmd/phpmd": "@stable",
-        "phpstan/phpstan": "0.12.x-dev",
+        "phpstan/phpstan": "^1.8",
         "phpunit/phpunit": "^9.5",
         "platine-php/dev": "dev-develop",
         "squizlabs/php_codesniffer": "3.*"
@@ -53,12 +53,6 @@
         "sort-packages": true
     },
     
-    "extra": {
-        "branch-alias": {
-            "dev-develop": "1.0.x-dev"
-        }
-    },
-
     "scripts": {
         "test": "phpunit --colors=always",
         "static": "phpstan analyze",
@@ -67,6 +61,6 @@
         "analyze": "phpmd src xml phpmd.xml"
     },
 	
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }

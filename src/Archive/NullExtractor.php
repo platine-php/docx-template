@@ -37,7 +37,7 @@
  *  @author Platine Developers Team
  *  @copyright  Copyright (c) 2020
  *  @license    http://opensource.org/licenses/MIT  MIT License
- *  @link   http://www.iacademy.cf
+ *  @link   https://www.platine-php.com
  *  @version 1.0.0
  *  @filesource
  */
@@ -55,21 +55,21 @@ use Platine\DocxTemplate\DocxExtractorInterface;
 class NullExtractor implements DocxExtractorInterface
 {
     /**
-     * {@inheritodc}
+     * {@inheritdoc}
      */
     public function archiveFolder(string $folder, string $filename): void
     {
     }
 
     /**
-     * {@inheritodc}
+     * {@inheritdoc}
      */
     public function extract(string $archive, string $destination = '.'): void
     {
     }
 
     /**
-     * {@inheritodc}
+     * {@inheritdoc}
      */
     public function totalFiles(): int
     {
@@ -77,14 +77,14 @@ class NullExtractor implements DocxExtractorInterface
     }
 
     /**
-     * {@inheritodc}
+     * {@inheritdoc}
      */
     public function close(): void
     {
     }
 
     /**
-     * {@inheritodc}
+     * {@inheritdoc}
      */
     public function getInfo(int $index): ArchiveInfo
     {

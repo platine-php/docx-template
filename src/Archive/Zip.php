@@ -37,7 +37,7 @@
  *  @author Platine Developers Team
  *  @copyright  Copyright (c) 2020
  *  @license    http://opensource.org/licenses/MIT  MIT License
- *  @link   http://www.iacademy.cf
+ *  @link   https://www.platine-php.com
  *  @version 1.0.0
  *  @filesource
  */
@@ -75,7 +75,7 @@ class Zip implements DocxExtractorInterface
     }
 
     /**
-     * {@inheritodc}
+     * {@inheritdoc}
      */
     public function archiveFolder(string $folder, string $filename): void
     {
@@ -113,7 +113,7 @@ class Zip implements DocxExtractorInterface
     }
 
     /**
-     * {@inheritodc}
+     * {@inheritdoc}
      */
     public function extract(string $archive, string $destination = '.'): void
     {
@@ -135,7 +135,7 @@ class Zip implements DocxExtractorInterface
     }
 
     /**
-     * {@inheritodc}
+     * {@inheritdoc}
      */
     public function totalFiles(): int
     {
@@ -143,7 +143,7 @@ class Zip implements DocxExtractorInterface
     }
 
     /**
-     * {@inheritodc}
+     * {@inheritdoc}
      */
     public function close(): void
     {
@@ -151,7 +151,7 @@ class Zip implements DocxExtractorInterface
     }
 
     /**
-     * {@inheritodc}
+     * {@inheritdoc}
      */
     public function getInfo(int $index): ArchiveInfo
     {
