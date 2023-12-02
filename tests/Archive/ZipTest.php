@@ -18,7 +18,6 @@ use ZipArchive;
  */
 class ZipTest extends PlatineTestCase
 {
-
     public function testConstructorDefault(): void
     {
         $l = new Zip();

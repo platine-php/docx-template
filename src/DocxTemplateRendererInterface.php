@@ -53,7 +53,6 @@ namespace Platine\DocxTemplate;
  */
 interface DocxTemplateRendererInterface
 {
-
     /**
      * Render the template content
      * @param string $content

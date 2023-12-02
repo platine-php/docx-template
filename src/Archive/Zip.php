@@ -125,7 +125,7 @@ class Zip implements DocxExtractorInterface
                 $open
             ));
         }
-        
+
         if (!$this->zip->extractTo($destination)) {
             throw new DocxArchiveException(sprintf(
                 'Can not extract file [%s]',

@@ -16,7 +16,6 @@ use RuntimeException;
  */
 class LibreOfficePDFConvertorTest extends PlatineTestCase
 {
-
     public function testPassthruNotExists(): void
     {
         global $mock_function_exists_to_false;

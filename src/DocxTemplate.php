@@ -58,7 +58,6 @@ use Platine\Filesystem\Filesystem;
  */
 class DocxTemplate
 {
-
     /**
      * The convertor instance to use
      * @var DocxConvertorInterface

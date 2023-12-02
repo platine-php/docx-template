@@ -15,7 +15,6 @@ use Platine\DocxTemplate\Renderer\NullRenderer;
  */
 class NullRendererTest extends PlatineTestCase
 {
-
     public function testDefault(): void
     {
         $l = new NullRenderer();

@@ -15,7 +15,6 @@ use Platine\DocxTemplate\Convertor\NullConvertor;
  */
 class NullConvertorTest extends PlatineTestCase
 {
-
     public function testDefault(): void
     {
         $l = new NullConvertor();

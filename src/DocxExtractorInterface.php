@@ -55,7 +55,6 @@ use Platine\DocxTemplate\Archive\ArchiveInfo;
  */
 interface DocxExtractorInterface
 {
-
     /**
      * Extract an archive to the given destination
      * @param string $archive

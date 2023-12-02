@@ -53,7 +53,6 @@ namespace Platine\DocxTemplate;
  */
 interface DocxConvertorInterface
 {
-
     /**
      * Convert the template file
      * @param string $templateFile

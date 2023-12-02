@@ -16,8 +16,6 @@ use Platine\DocxTemplate\Archive\NullExtractor;
  */
 class NullExtractorTest extends PlatineTestCase
 {
-
-
     public function testArchiveFolder(): void
     {
         $l = new NullExtractor();

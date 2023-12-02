@@ -24,7 +24,6 @@ use Platine\Filesystem\Filesystem;
  */
 class DocxTemplateTest extends PlatineTestCase
 {
-
     public function testConstructorDefault(): void
     {
         $convertor = $this->getMockInstance(NullConvertor::class);

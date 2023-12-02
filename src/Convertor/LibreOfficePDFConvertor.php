@@ -55,7 +55,6 @@ use RuntimeException;
  */
 class LibreOfficePDFConvertor implements DocxConvertorInterface
 {
-
     /**
      * {@inheritdoc}
      * @example:
