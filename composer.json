@@ -21,8 +21,8 @@
     "require": {
         "php": "^7.4 || ^8",
         "ext-zip": "*",
-        "platine-php/filesystem": "1.0.x-dev",
-        "platine-php/template": "1.0.x-dev"
+        "platine-php/filesystem": "^1.0",
+        "platine-php/template": "^1.0"
     },
 	
     "require-dev": {
