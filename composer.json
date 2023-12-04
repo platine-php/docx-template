@@ -30,7 +30,7 @@
         "phpmd/phpmd": "@stable",
         "phpstan/phpstan": "^1.8",
         "phpunit/phpunit": "^9.5",
-        "platine-php/dev": "dev-develop",
+        "platine-php/dev": "^1.0",
         "squizlabs/php_codesniffer": "3.*"
     },
     
