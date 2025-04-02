@@ -11,7 +11,7 @@ build:
                         command: phpcs-run
                         use_website_config: false
     environment:
-        php: 7.4.0
+        php: 8.0
 filter:
     excluded_paths:
         - 'tests/*'

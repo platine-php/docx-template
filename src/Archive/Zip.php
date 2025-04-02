@@ -157,7 +157,10 @@ class Zip implements DocxExtractorInterface
     {
         $stat = $this->zip->statIndex($index);
         if ($stat === false) {
-            throw new DocxArchiveException(sprintf('Can not stat the archive file at index [%d]', $index));
+            throw new DocxArchiveException(sprintf(
+                'Can not stat the archive file at index [%d]',
+                $index
+            ));
         }
 
         return new ArchiveInfo(

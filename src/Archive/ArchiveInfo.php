@@ -53,36 +53,6 @@ namespace Platine\DocxTemplate\Archive;
 class ArchiveInfo
 {
     /**
-     * The archive name
-     * @var string
-     */
-    protected string $name;
-
-    /**
-     * The position in archive
-     * @var int
-     */
-    protected int $index;
-
-    /**
-     * The size
-     * @var int
-     */
-    protected int $size;
-
-    /**
-     * The modification time
-     * @var int
-     */
-    protected int $mtime;
-
-    /**
-     * The control value
-     * @var int
-     */
-    protected int $crc;
-
-    /**
      * Create new instance
      * @param string $name
      * @param int $index
@@ -90,13 +60,13 @@ class ArchiveInfo
      * @param int $mtime
      * @param int $crc
      */
-    public function __construct(string $name, int $index, int $size, int $mtime, int $crc)
-    {
-        $this->name = $name;
-        $this->index = $index;
-        $this->size = $size;
-        $this->mtime = $mtime;
-        $this->crc = $crc;
+    public function __construct(
+        protected string $name,
+        protected int $index,
+        protected int $size,
+        protected int $mtime,
+        protected int $crc
+    ) {
     }
 
     /**

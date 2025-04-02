@@ -57,6 +57,7 @@ interface DocxTemplateRendererInterface
      * Render the template content
      * @param string $content
      * @param array<string, mixed> $data
+     *
      * @return string
      */
     public function render(string $content, array $data = []): string;

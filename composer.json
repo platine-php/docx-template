@@ -19,7 +19,7 @@
     },
 	
     "require": {
-        "php": "^7.4 || ^8",
+        "php": "^8",
         "ext-zip": "*",
         "platine-php/filesystem": "^1.0",
         "platine-php/template": "^1.0"
@@ -28,9 +28,9 @@
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
         "phpmd/phpmd": "@stable",
-        "phpstan/phpstan": "^1.8",
-        "phpunit/phpunit": "^9.5",
-        "platine-php/dev": "^1.0",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^9.6",
+        "platine-php/dev": "^2.0",
         "squizlabs/php_codesniffer": "3.*"
     },
     
